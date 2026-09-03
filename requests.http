@@ -1,0 +1,39 @@
+### Get products
+GET http://localhost:8080/products
+Content-Type: application/json
+
+### Get product by ID - Not found
+GET http://localhost:8080/products/100
+Content-Type: application/json
+
+### Get product by ID - Found
+GET http://localhost:8080/products/1
+Content-Type: application/json
+
+### Create product
+POST http://localhost:8080/products
+Content-Type: application/json
+
+{
+  "name": "Headphone Soundcore Space One Pro",
+  "priceInCents": 2400,
+  "quantity": 5
+}
+
+### Create order
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "customerId": 44,
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 2
+    },
+    {
+      "productId": 2,
+      "quantity": 1
+    }
+  ]
+}
