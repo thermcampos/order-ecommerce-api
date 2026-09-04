@@ -9,15 +9,26 @@ import (
 	repo "github.com/rmcampos/ecom/internal/adapters/postgres/sqlc"
 )
 
-type Service interface {
-	CreateOrder(ctx context.Context, orderRequest createOrderParam) (repo.Order, error)
-}
-
+// constructor arguments type
 type svc struct {
 	repo *repo.Queries
 	db   *pgx.Conn
 }
 
+// constructor logic
+func NewService(repo *repo.Queries, db *pgx.Conn) Service {
+	return &svc{
+		repo: repo,
+		db:   db,
+	}
+}
+
+// methods declaration/signatures
+type Service interface {
+	CreateOrder(ctx context.Context, orderRequest createOrderParam) (repo.Order, error)
+}
+
+// methods implementation
 func (s *svc) CreateOrder(ctx context.Context, orderRequest createOrderParam) (repo.Order, error) {
 	// validate payload
 	if orderRequest.CustomerID <= 0 {
@@ -81,11 +92,4 @@ func (s *svc) CreateOrder(ctx context.Context, orderRequest createOrderParam) (r
 	}
 
 	return order, nil
-}
-
-func NewService(repo *repo.Queries, db *pgx.Conn) Service {
-	return &svc{
-		repo: repo,
-		db:   db,
-	}
 }

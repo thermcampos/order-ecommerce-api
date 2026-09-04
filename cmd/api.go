@@ -8,22 +8,24 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5"
-	repo "github.com/rmcampos/ecom/internal/adapters/postgres/sqlc"
 	"github.com/rmcampos/ecom/internal/orders"
 	"github.com/rmcampos/ecom/internal/products"
 )
 
+// constructor arguments type
 type application struct {
 	config config
 	db     *pgx.Conn
 }
 
+// nested type for db config, in the config argument of application
 type dbConfig struct {
-	dsn string // database connection string
+	dsn string
 }
 
+// config type, argument for the application constructor
 type config struct {
-	addr string // 12 factor document
+	addr string
 	db   dbConfig
 }
 
@@ -48,15 +50,9 @@ func (app *application) mount() http.Handler {
 		}
 	})
 
-	productsService := products.NewService(repo.New(app.db))
-	productsHandler := products.NewHandler(productsService)
-	r.Get("/products", productsHandler.ListProductsHandler)
-	r.Get("/products/{id}", productsHandler.FindProductByIDHandler)
-	r.Post("/products", productsHandler.CreateProductHandler)
-
-	ordersService := orders.NewService(repo.New(app.db), app.db)
-	ordersHandler := orders.NewHandler(ordersService)
-	r.Post("/orders", ordersHandler.CreateOrderHandler)
+	// Domains registers
+	products.Mount(r, app.db)
+	orders.Mount(r, app.db)
 
 	return r
 }

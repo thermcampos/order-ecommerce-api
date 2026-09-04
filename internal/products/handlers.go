@@ -1,29 +1,47 @@
 package products
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5"
 	repo "github.com/rmcampos/ecom/internal/adapters/postgres/sqlc"
 	"github.com/rmcampos/ecom/internal/json"
 )
 
+// mount
+func Mount(r chi.Router, db *pgx.Conn) {
+	productsService := NewService(repo.New(db))
+	productsHandler := NewHandler(productsService)
+	productsHandler.RegisterRoutes(r)
+}
+
+// routes declaration
+func (h *handler) RegisterRoutes(r chi.Router) {
+	r.Get("/products", h.ListProductsHandler)
+	r.Get("/products/{id}", h.FindProductByIDHandler)
+	r.Post("/products", h.CreateProductHandler)
+}
+
+// constructor arguments type
 type handler struct {
 	service Service
 }
 
+// constructor logic
 func NewHandler(service Service) *handler {
 	return &handler{
 		service: service,
 	}
 }
 
+// rountes implementation
 func (h *handler) ListProductsHandler(w http.ResponseWriter, r *http.Request) {
 	products, err := h.service.ListProducts(r.Context())
 	if err != nil {
-		log.Println(err)
+		slog.Error("Failed to list products", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -60,7 +78,7 @@ func (h *handler) FindProductByIDHandler(w http.ResponseWriter, r *http.Request)
 		}
 
 		// otherwise, return internal server error
-		log.Println(err)
+		slog.Error("Failed to find products by ID", "error", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -71,14 +89,14 @@ func (h *handler) FindProductByIDHandler(w http.ResponseWriter, r *http.Request)
 func (h *handler) CreateProductHandler(w http.ResponseWriter, r *http.Request) {
 	var productPayload createProductDto
 	if err := json.Read(r, &productPayload); err != nil {
-		log.Println(err)
+		slog.Error("Failed to create product", "error", err)
 		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
 
 	createdProduct, err := h.service.CreateProduct(r.Context(), productPayload)
 	if err != nil {
-		log.Println(err)
+		slog.Error("Failed to create product", "error", err)
 		// if error contains "is required" or "invalid" returns 400
 		if err.Error() == "name is required" || err.Error() == "price is required" || err.Error() == "quantity is required" {
 			http.Error(w, err.Error(), http.StatusBadRequest)

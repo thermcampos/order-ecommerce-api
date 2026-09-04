@@ -52,24 +52,18 @@ func (q *Queries) CreateOrderItem(ctx context.Context, arg CreateOrderItemParams
 }
 
 const createProduct = `-- name: CreateProduct :one
-INSERT INTO products (id, name, price_in_cents, quantity)
-VALUES ($1, $2, $3, $4) RETURNING id, name, price_in_cents, quantity, created_at
+INSERT INTO products (name, price_in_cents, quantity)
+VALUES ($1, $2, $3) RETURNING id, name, price_in_cents, quantity, created_at
 `
 
 type CreateProductParams struct {
-	ID           int64  `json:"id"`
 	Name         string `json:"name"`
 	PriceInCents int32  `json:"price_in_cents"`
 	Quantity     int32  `json:"quantity"`
 }
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
-	row := q.db.QueryRow(ctx, createProduct,
-		arg.ID,
-		arg.Name,
-		arg.PriceInCents,
-		arg.Quantity,
-	)
+	row := q.db.QueryRow(ctx, createProduct, arg.Name, arg.PriceInCents, arg.Quantity)
 	var i Product
 	err := row.Scan(
 		&i.ID,
@@ -98,18 +92,6 @@ func (q *Queries) FindProductByID(ctx context.Context, id int64) (Product, error
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const findProductMaxID = `-- name: FindProductMaxID :one
-SELECT MAX(id) AS max_id
-FROM products
-`
-
-func (q *Queries) FindProductMaxID(ctx context.Context) (interface{}, error) {
-	row := q.db.QueryRow(ctx, findProductMaxID)
-	var max_id interface{}
-	err := row.Scan(&max_id)
-	return max_id, err
 }
 
 const listProducts = `-- name: ListProducts :many
