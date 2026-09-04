@@ -81,6 +81,13 @@ goose -version
 
 These extensions make it easier to interact with the project:
 
+#### Go
+
+- Open VS Code.
+- Go to **Extensions** (`Ctrl+Shift+X` / `Cmd+Shift+X`).
+- Search for `Go lang` by the Golang team.
+- Click **Install**
+
 #### REST Client
 
 - Open VS Code.
@@ -102,6 +109,23 @@ These extensions make it easier to interact with the project:
   - **Username:** `order`
   - **Password:** `order`
 - You can then inspect tables and run queries directly against the local database.
+
+In case you're on **Open VSX**, try installing with:
+
+```
+# Go
+vscodium --install-extension golang.go
+
+# REST Client
+vscodium --install-extension humao.rest-client
+
+# SQLTools UI
+vscodium --install-extension mtxr.sqltools
+
+# Choose your driver, Postgres or MySQL
+vscodium --install-extension mtxr.sqltools-driver-pg
+vscodium --install-extension mtxr.sqltools-driver-mysql
+```
 
 ## Project Structure
 

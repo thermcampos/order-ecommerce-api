@@ -56,7 +56,7 @@ func (s *svc) CreateProduct(ctx context.Context, product createProductDto) (repo
 
 	// create product
 	productCreated, err := s.repo.CreateProduct(ctx, repo.CreateProductParams{
-		ID:					  newID,
+		ID:           newID,
 		Name:         product.Name,
 		PriceInCents: product.PriceInCents,
 		Quantity:     product.Quantity,
