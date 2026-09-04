@@ -29,9 +29,13 @@ func main() {
 		slog.Error("Failed to connect to database", "error", err)
 		os.Exit(1)
 	}
-	defer conn.Close(ctx)
+	defer func() {
+		if err := conn.Close(ctx); err != nil {
+			slog.Error("Failed to close database connection", "error", err, "connection", cfg.db.dsn)
+		}
+	}()
 
-	logger.Info("Connected to database", "dsn", cfg.db.dsn)
+	slog.Info("Connected to database", "dsn", cfg.db.dsn)
 
 	api := application{
 		config: cfg,

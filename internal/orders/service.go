@@ -3,6 +3,7 @@ package orders
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/jackc/pgx/v5"
 	repo "github.com/rmcampos/ecom/internal/adapters/postgres/sqlc"
@@ -36,7 +37,11 @@ func (s *svc) CreateOrder(ctx context.Context, orderRequest createOrderParam) (r
 	if err != nil {
 		return repo.Order{}, fmt.Errorf("failed to start transaction: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() {
+		if err := tx.Rollback(ctx); err != nil {
+			slog.Error("Failed to rollback database transaction", "error", err, "connection", s.db.Config())
+		}
+	}()
 
 	qtx := s.repo.WithTx(tx)
 

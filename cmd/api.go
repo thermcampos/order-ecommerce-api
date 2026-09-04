@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"log/slog"
 	"net/http"
 	"time"
 
@@ -15,8 +15,7 @@ import (
 
 type application struct {
 	config config
-	// logger
-	db *pgx.Conn
+	db     *pgx.Conn
 }
 
 type dbConfig struct {
@@ -44,7 +43,9 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.Timeout(60 * time.Second))
 
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("hey"))
+		if _, err := w.Write([]byte("OK")); err != nil {
+			slog.Error("Failed to write health response", "error", err)
+		}
 	})
 
 	productsService := products.NewService(repo.New(app.db))
@@ -70,7 +71,7 @@ func (app *application) run(h http.Handler) error {
 		IdleTimeout:  60 * time.Second,
 	}
 
-	log.Printf("Starting server on %s\n", app.config.addr)
+	slog.Info("Starting server", "port", app.config.addr)
 
 	return srv.ListenAndServe()
 }
