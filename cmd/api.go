@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5"
+	"github.com/rmcampos/ecom/internal/logging"
 	"github.com/rmcampos/ecom/internal/orders"
 	"github.com/rmcampos/ecom/internal/products"
 )
@@ -36,7 +37,7 @@ func (app *application) mount() http.Handler {
 	// A good base middleware stack
 	r.Use(middleware.RequestID)              // important for rate-limiting
 	r.Use(middleware.ClientIPFromRemoteAddr) // also important for rate-limiting, analytics and tracing
-	r.Use(middleware.Logger)
+	r.Use(middleware.RequestLogger(logging.NewFormatter()))
 	r.Use(middleware.Recoverer) // nice to recover from panics and crashes
 
 	// Set a timeout value on the request context (ctx), that will signal
