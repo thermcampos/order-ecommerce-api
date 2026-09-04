@@ -144,7 +144,7 @@ PostgreSQL (pgx)
 
 ### Naming
 
-- Generated repository package is imported as `repo` (`import repo "github.com/rmcampos/ecom/internal/adapters/postgres/sqlc"`).
+- Generated repository package is imported as `repo` (`import repo "github.com/thermcampos/ecom/internal/adapters/postgres/sqlc"`).
 - Service type is an interface named `Service`; concrete implementation is `svc` (private).
 - Handlers return a `*handler` via `NewHandler` constructor.
 - Use `New...` constructors for wiring dependencies.

@@ -36,6 +36,10 @@ func (f *slogFormatter) NewLogEntry(r *http.Request) middleware.LogEntry {
 }
 
 func (e *slogLogEntry) Write(status, bytes int, header http.Header, elapsed time.Duration, extra interface{}) {
+	isReadyOrLive := e.request.RequestURI == "/live" || e.request.RequestURI == "/ready"
+	if isReadyOrLive {
+		return
+	}
 	slog.Info("Request",
 		"method", e.request.Method,
 		"uri", e.request.RequestURI,

@@ -1,3 +1,7 @@
+### Get Health
+GET http://localhost:8080/health
+Content-Type: application/json
+
 ### Get products
 GET http://localhost:8080/products
 Content-Type: application/json

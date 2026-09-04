@@ -1,4 +1,4 @@
-module github.com/rmcampos/ecom
+module github.com/thermcampos/ecom
 
 go 1.26.5
 

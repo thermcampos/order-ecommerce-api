@@ -8,9 +8,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5"
-	"github.com/rmcampos/ecom/internal/logging"
-	"github.com/rmcampos/ecom/internal/orders"
-	"github.com/rmcampos/ecom/internal/products"
+	"github.com/thermcampos/ecom/internal/domain/orders"
+	"github.com/thermcampos/ecom/internal/domain/products"
+	"github.com/thermcampos/ecom/internal/platform/health"
+	"github.com/thermcampos/ecom/internal/platform/logging"
 )
 
 // constructor arguments type
@@ -45,11 +46,7 @@ func (app *application) mount() http.Handler {
 	// processing should be stopped.
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := w.Write([]byte("OK")); err != nil {
-			slog.Error("Failed to write health response", "error", err)
-		}
-	})
+	health.Mount(r)
 
 	// Domains registers
 	products.Mount(r, app.db)

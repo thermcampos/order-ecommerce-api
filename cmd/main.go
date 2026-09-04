@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/rmcampos/ecom/internal/env"
+	"github.com/thermcampos/ecom/internal/platform/env"
 )
 
 func main() {

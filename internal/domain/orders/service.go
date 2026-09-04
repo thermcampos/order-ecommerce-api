@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/jackc/pgx/v5"
-	repo "github.com/rmcampos/ecom/internal/adapters/postgres/sqlc"
+	repo "github.com/thermcampos/ecom/internal/adapters/postgres/sqlc"
 )
 
 // constructor arguments type
