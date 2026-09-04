@@ -20,14 +20,14 @@ type svc struct {
 func (s *svc) CreateOrder(ctx context.Context, orderRequest createOrderParam) (repo.Order, error) {
 	// validate payload
 	if orderRequest.CustomerID <= 0 {
-		return repo.Order{}, fmt.Errorf("Invalid customer ID")
+		return repo.Order{}, fmt.Errorf("invalid customer ID: %d", orderRequest.CustomerID)
 	}
 	if len(orderRequest.Items) == 0 {
-		return repo.Order{}, fmt.Errorf("Order must contain at least one item")
+		return repo.Order{}, fmt.Errorf("no items in the order. Orders must contain at least one item")
 	}
 	for _, item := range orderRequest.Items {
 		if item.Quantity <= 0 {
-			return repo.Order{}, fmt.Errorf("Invalid item quantity")
+			return repo.Order{}, fmt.Errorf("invalid item quantity: %d", item.Quantity)
 		}
 	}
 
